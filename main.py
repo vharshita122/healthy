@@ -71,18 +71,14 @@ def index():
 def home():
     if request.method == 'POST':
         symptoms = request.form.get('symptoms')
-        # mysysms = request.form.get('mysysms')
-        # print(mysysms)
         print(symptoms)
-        if symptoms =="Symptoms":
+        if symptoms == "Symptoms":
             message = "Please either write symptoms or you have written misspelled symptoms"
             return render_template('index.html', message=message)
         else:
+            # 👇 One clean line here — this fixes your Itching bug!
+            user_symptoms = [symptom.strip("[]' ").lower() for symptom in symptoms.split(',')]
 
-            # Split the user's input into a list of symptoms (assuming they are comma-separated)
-            user_symptoms = [s.strip() for s in symptoms.split(',')]
-            # Remove any extra characters, if any
-            user_symptoms = [symptom.strip("[]' ") for symptom in user_symptoms]
             predicted_disease = get_predicted_value(user_symptoms)
             dis_des, precautions, medications, rec_diet, workout = helper(predicted_disease)
 
@@ -95,6 +91,7 @@ def home():
                                    workout=workout)
 
     return render_template('index.html')
+
 
 
 
