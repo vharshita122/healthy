@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Health Care Center</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    /* Body & Fonts */
+    body {
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #1f2937; /* dark slate */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 28px;
+      color: #f3f4f6 !important;
+      letter-spacing: 1.2px;
+    }
+    .nav-link {
+      color: #d1d5db !important;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      margin-right: 15px;
+      font-size: 17px;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: #3b82f6 !important; /* blue highlight */
+      text-decoration: underline;
+    }
+    .myimg {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 12px;
+      border: 2.5px solid #3b82f6;
+      object-fit: cover;
+    }
+
+    /* Main container */
+    .container.mt-5 {
+      flex-grow: 1;
+      max-width: 760px;
+      padding: 40px 20px;
+      background: rgba(255 255 255 / 0.95);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgb(59 130 246 / 0.3);
+    }
+
+    h1.text-center {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #2563eb;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 5px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Form styles */
+    .container-form {
+      background-color: #f9fafb;
+      padding: 35px 30px;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
+      border: 1px solid #dbeafe;
+      transition: box-shadow 0.3s ease;
+    }
+    .container-form:hover {
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+    }
+
+    label.form-label {
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #1e40af;
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+    input#symptoms {
+      font-size: 1.2rem;
+      padding: 14px 20px;
+      border: 2px solid #93c5fd;
+      border-radius: 12px;
+      transition: border-color 0.3s ease;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+    }
+    input#symptoms:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 10px #3b82f6a6;
+    }
+
+    /* Speech Button */
+    .btn-speech {
+      background: #2563eb;
+      color: #fff;
+      border-radius: 30px;
+      padding: 12px 28px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border: none;
+      margin-top: 15px;
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn-speech:hover {
+      background: #1d4ed8;
+      box-shadow: 0 8px 18px rgba(29, 78, 216, 0.6);
+    }
+
+    /* Predict button */
+    .btn-predict {
+      width: 100%;
+      padding: 16px;
+      border-radius: 30px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ef4444, #b91c1c);
+      border: none;
+      color: #fff;
+      margin-top: 30px;
+      box-shadow: 0 8px 18px rgba(239, 68, 68, 0.7);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn-predict:hover {
+      background: linear-gradient(90deg, #b91c1c, #7f1d1d);
+      box-shadow: 0 10px 25px rgba(139, 22, 22, 0.8);
+    }
+
+    /* Transcription text */
+    #transcription {
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: #3b82f6;
+      margin-top: 12px;
+      min-height: 28px;
+    }
+
+    /* Error Message */
+    p.text-danger {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-top: 10px;
+    }
+
+    /* Results Card */
+    .results-card {
+      margin-top: 40px;
+      background: #fff;
+      padding: 35px 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+      border: 1px solid #dbeafe;
+      color: #1e293b;
+    }
+    .results-card h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #2563eb;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 5px rgba(37, 99, 235, 0.35);
+    }
+
+    /* Section titles in results */
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e40af;
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 6px;
+      margin-top: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    ul {
+      padding-left: 25px;
+      list-style-type: disc;
+      font-size: 1.05rem;
+      color: #334155;
+    }
+    ul li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      padding: 18px 0;
+      background: #e0e7ff;
+      color: #334155;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      letter-spacing: 0.7px;
+      border-top: 2px solid #3b82f6;
+      user-select: none;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      h1.text-center {
+        font-size: 2.4rem;
+      }
+      .container-form, .results-card {
+        padding: 25px 20px;
+      }
+      .btn-predict {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img class="myimg" src="{{ url_for('static', filename='img.png') }}" alt="Logo" />
+      Health Care Center
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/contact">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/developer">Developer</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/blog">Blog</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-5 d-flex flex-column align-items-center">
+  <h1 class="text-center">Health Care Center</h1>
+
+  <div class="container-form w-100">
+    <form action="/predict" method="post">
+      <div class="form-group mb-3">
+        <label for="symptoms" class="form-label">Enter Symptoms:</label>
+        <input
+          type="text"
+          class="form-control form-control-lg"
+          id="symptoms"
+          name="symptoms"
+          placeholder="e.g. itching, sleeping, aching..."
+          autocomplete="off"
+          required
+        />
+      </div>
+
+      <button type="button" id="startSpeechRecognition" class="btn-speech">
+        🎤 Start Speech Recognition
+      </button>
+      <div id="transcription"></div>
+
+      {% if message %}
+      <p class="text-danger mt-2">{{ message }}</p>
+      {% endif %}
+
+      <button type="submit" class="btn-predict">Predict</button>
+    </form>
+  </div>
+
+  {% if predicted_disease %}
+  <!-- Results Card -->
+  <div class="results-card mt-5 w-100">
+    <h2>AI System Results</h2>
+
+    <div class="section-title">Disease:</div>
+    <p>{{ predicted_disease }}</p>
+
+    <div class="section-title">Description:</div>
+    <p>{{ dis_des }}</p>
+
+    <div class="section-title">Precautions:</div>
+    <ul>
+      {% for i in my_precautions %}
+      <li>{{ i }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="section-title">Medications:</div>
+    <ul>
+      {% for i in medications %}
+      <li>{{ i }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="section-title">Workouts:</div>
+    <ul>
+      {% for i in workout %}
+      <li>{{ i }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="section-title">Diets:</div>
+    <ul>
+      {% for i in my_diet %}
+      <li>{{ i }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+
+<div class="footer">&copy; 2025 Health Care Center | All Rights Reserved</div>
+
+<script>
+  const startSpeechRecognitionButton = document.getElementById('startSpeechRecognition');
+  const transcriptionDiv = document.getElementById('transcription');
+
+  startSpeechRecognitionButton.addEventListener('click', startSpeechRecognition);
+
+  function startSpeechRecognition() {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function (event) {
+      const result = event.results[0][0].transcript;
+      transcriptionDiv.textContent = "You said: " + result;
+      document.getElementById('symptoms').value = result;
+    };
+
+    recognition.onend = function () {
+      console.log('Speech recognition ended.');
+    };
+
+    recognition.start();
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
