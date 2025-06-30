@@ -59,46 +59,51 @@ def get_predicted_value(patient_symptoms):
 
 
 
-# creating routes========================================
-
-
 @app.route("/")
 def index():
-    return render_template("index.html")
+    symptoms_list = list(symptoms_dict.keys())
+    return render_template("index.html", symptoms_list=symptoms_list)
 
-# Define a route for the home page
+
 @app.route('/predict', methods=['GET', 'POST'])
 def home():
+    symptoms_list = list(symptoms_dict.keys())  # Always needed for rendering
+
     if request.method == 'POST':
-        symptoms = request.form.get('symptoms')
-        print(symptoms)
+        symptoms = request.form.getlist('symptoms')  # Get multiple selected symptoms
 
-        if symptoms == "Symptoms" or not symptoms.strip():
-            message = "Please enter valid symptoms from the dictionary."
-            return render_template('index.html', message=message)
+        if not symptoms:
+            message = "Please select valid symptoms from the list."
+            return render_template('index.html', message=message, symptoms_list=symptoms_list)
 
-        # Clean and process user symptoms
-        user_symptoms = [symptom.strip("[]' ").lower() for symptom in symptoms.split(',')]
+        # Clean user input (just in case)
+        user_symptoms = [symptom.strip().lower() for symptom in symptoms]
 
         # Check for unknown symptoms
         unknown_symptoms = [sym for sym in user_symptoms if sym not in symptoms_dict]
         if unknown_symptoms:
-            message = f"Symptom(s) not found: {', '.join(unknown_symptoms)}. Please try again with valid symptoms from the dictionary."
-            return render_template('index.html', message=message)
+            message = f"Symptom(s) not found: {', '.join(unknown_symptoms)}. Please try again with valid symptoms."
+            return render_template('index.html', message=message, symptoms_list=symptoms_list)
 
-        # If all symptoms are valid, proceed
+        # All valid symptoms, make prediction
         predicted_disease = get_predicted_value(user_symptoms)
         dis_des, precautions, medications, rec_diet, workout = helper(predicted_disease)
 
-        my_precautions = []
-        for i in precautions[0]:
-            my_precautions.append(i)
+        my_precautions = [i for i in precautions[0]]
 
-        return render_template('index.html', predicted_disease=predicted_disease, dis_des=dis_des,
-                               my_precautions=my_precautions, medications=medications, my_diet=rec_diet,
-                               workout=workout)
+        return render_template(
+            'index.html',
+            predicted_disease=predicted_disease,
+            dis_des=dis_des,
+            my_precautions=my_precautions,
+            medications=medications,
+            my_diet=rec_diet,
+            workout=workout,
+            symptoms_list=symptoms_list
+        )
 
-    return render_template('index.html')
+    return render_template('index.html', symptoms_list=symptoms_list)
+
 
 
 
